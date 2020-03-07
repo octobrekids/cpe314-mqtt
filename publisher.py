@@ -6,12 +6,14 @@ MAX_BUF = 2048
 SERV_PORT = 50000
 
 def main():
+  # try to run publisher program
   try:
       print('PUBLISHER CMD')
       print('publish (broker_ip_address) (topic_name) (data to publish)')
       print("ex. publish 127.0.0.1 '/room1/light' 'value=on' ")  
 
       while True:
+          # read command
           print("command > " ,end=" ")
           sys.stdout.flush()
           command = sys.stdin.readline().strip()
@@ -23,23 +25,41 @@ def main():
           if command == 'quit':
             print('disconnect....')
             break
-          # wrong format of command
+
+          # correct command format
           elif len(cmdSplit) == 4 and cmdSplit[0] == 'publish':
+            # store broker_ip_address
             broker_ip_address = cmdSplit[1]
 
             # connect broker ip socket
             serv_sock_addr = (broker_ip_address, SERV_PORT)
           
+            # try to connect socket
             try:
-              cli_sock = socket(AF_INET, SOCK_STREAM) # tcp socket
+              # tcp socket
+              cli_sock = socket(AF_INET, SOCK_STREAM) 
+
+              # set timeout 2.0 second
               cli_sock.settimeout(2.0)  
+
+              # connect socket
               cli_sock.connect(serv_sock_addr)
+
+              # connected socket then set timeout -> none
               cli_sock.settimeout(None)  
+
+              # send command to broker
               cli_sock.send(command.encode('utf-8'))
+
+            # if can't connect to broker in 2 second  
             except: 
               print('NoBrokerIP: Connection Failed')
+
+          # wrong command format
           else:
             print("SyntaxError : Wrong Format of Command")
+  
+  # if program can't run then close socket 
   except:
     cli_sock.close()
 
