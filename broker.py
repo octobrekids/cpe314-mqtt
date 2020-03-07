@@ -1,83 +1,66 @@
-
 from socket import * 
 from threading import Thread
 import os,sys
 
 SERV_PORT = 50000
+topicDict = {}
 
 hostname = gethostname()
-print('%s hostname ' %(hostname))
-IPAddr = gethostbyname(hostname) 
-print(' %s ip addr broker' %(IPAddr))
+#IPAddr = gethostbyname(hostname) 
+IPAddr = "127.0.0.1"
 
-# 2d array topic
-topic = {}
+def handle_client(s,addr):
+  ip, port = str(addr[0]),str(addr[1])
+  try:
+    while True:
+      txtin = s.recv(1024)
+      command = txtin.decode('utf-8').lower().split()
 
-def handle_client(s):
-  global countTopic
-  countTopic = 0
-  while True:
-
-    txtin = s.recv(1024)
-    print ('Command> %s' %(txtin).decode('utf-8')) 
-    command = txtin.decode('utf-8').lower().split(" ")
-    confirmRecv = "Receive message already."
-    s.send(confirmRecv.encode('utf-8'))
-
-    if command[0] == 'publish':
-        print('yeash')
-        if len(topic) != 0:
-            for row in topic:
-                if command[2] == topic[row]:
-                    print('have')
-                else: 
-                    print('dont have')
-                    topic[countTopic] = command[2]
-                    countTopic = countTopic + 1 
-                    print("counttopic %s topic %s" %(countTopic-1,topic[countTopic-1]))
+      if command[0] == 'publish':
+        print ('Publisher> %s' %(txtin).decode('utf-8')) 
+        for topic in topicDict:
+           if topic == command[2]:
+             for subscriber in topicDict[command[2]]:
+              subscriber.send(command[3].encode('utf-8'))     
+        s.close()
+        break
+          
+      elif command[0] == 'subscribe':
+        print ('Subscriber %s:%s > %s' %(ip,port,(txtin).decode('utf-8')))
+        if command[2] not in topicDict:
+          topicDict[command[2]] = [s]
         else:
-            print('dont have jingjing')
-            topic[0] = command[2] 
-            countTopic = countTopic + 1 
+          topicDict[command[2]].append(s)
 
-        print(len(topic))
-        for row in topic:
-            print(topic[row])    
-        break
-
-    elif command[0] == 'subscribe':
-        print("jub")
-        break
-
+  except: 
+    for topic in topicDict:
+      for subscriber in topicDict[topic]:
+        if subscriber == s:
+          topicDict[topic].remove(s)
+    print("Subscriber %s:%s disconnect..." %(ip,port))
   s.close()
   return
 
 def main():
+
   serv_sock_addr = (IPAddr, SERV_PORT)
   welcome_sock = socket(AF_INET, SOCK_STREAM)
   welcome_sock.bind(serv_sock_addr)
   welcome_sock.listen(5)
-  print ('TCP threaded server started ...')
+  print ('Broker IP : %s started ...' %(IPAddr))
 
   while True:
     conn_sock, cli_sock_addr = welcome_sock.accept()
     ip, port = str(cli_sock_addr[0]), str(cli_sock_addr[1]) 
     print ('New client connected from ..' + ip + ':' + port)
 
-    rawRole = conn_sock.recv(1024)
-    role = rawRole.decode('utf-8')
-    
-    if role == 'publisher':
-      print("publisher")
-    else:
-      print("subscriber")
-  
     try:
-      Thread(target=handle_client, args=(conn_sock,)).start()
+      Thread(target=handle_client, args=(conn_sock,cli_sock_addr)).start()
     except:
       print("Cannot start thread..")
       import traceback
       traceback.print_exc()
+
   welcome_sock.close()
 
 # Handle Ctrl-C Interrupt
