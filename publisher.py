@@ -13,7 +13,7 @@ def main():
       print("ex. publish 127.0.0.1 '/room1/light' 'value=on' ")  
 
       while True:
-          # read command
+          # read command from user
           print("command > " ,end=" ")
           sys.stdout.flush()
           command = sys.stdin.readline().strip()
