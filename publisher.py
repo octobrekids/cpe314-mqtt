@@ -59,7 +59,7 @@ def main():
           else:
             print("SyntaxError : Wrong Format of Command")
   
-  # if program can't run then close socket 
+  # if program can't run then close client socket 
   except:
     cli_sock.close()
 
