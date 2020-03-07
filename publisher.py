@@ -31,7 +31,7 @@ def main():
             # store broker_ip_address
             broker_ip_address = cmdSplit[1]
 
-            # connect broker ip socket
+            # set port & ip for connect socket
             serv_sock_addr = (broker_ip_address, SERV_PORT)
           
             # try to connect socket
