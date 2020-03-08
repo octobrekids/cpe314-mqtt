@@ -40,7 +40,7 @@ def main():
               cli_sock = socket(AF_INET, SOCK_STREAM) 
 
               # set timeout 2.0 second
-              cli_sock.settimeout(2.0)  
+              cli_sock.settimeout(5.0)  
 
               # connect socket
               cli_sock.connect(serv_sock_addr)

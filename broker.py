@@ -32,7 +32,7 @@ def handle_client(s,addr):
            if topic == command[2]:
              # send message to all who subscribed the topic
              for subscriber in topicDict[command[2]]:
-              subscriber.send(command[3].encode('utf-8'))  
+              subscriber.send(command[3].encode('utf-8')) 
         # broker -> publisher (receive data already) 
         s.send(("Send to Broker Already").encode('utf-8'))  
         s.close()
@@ -44,9 +44,11 @@ def handle_client(s,addr):
         # if topic not exists
         if command[2] not in topicDict:
           topicDict[command[2]] = [s]
+          print(topicDict[command[2]])
         # if topic exists then append socket to the topic
         else:
           topicDict[command[2]].append(s)
+          print(topicDict[command[2]])
 
   # if error occur from ctrl-c (subscriber) then removed the socket from subscribed topic
   except: 
