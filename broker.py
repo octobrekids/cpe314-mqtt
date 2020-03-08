@@ -44,11 +44,11 @@ def handle_client(s,addr):
         # if topic not exists
         if command[2] not in topicDict:
           topicDict[command[2]] = [s]
-          print(topicDict[command[2]])
+          #print(topicDict[command[2]])
         # if topic exists then append socket to the topic
         else:
           topicDict[command[2]].append(s)
-          print(topicDict[command[2]])
+          #print(topicDict[command[2]])
 
   # if error occur from ctrl-c (subscriber) then removed the socket from subscribed topic
   except: 
