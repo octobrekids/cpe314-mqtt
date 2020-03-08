@@ -23,7 +23,7 @@ def main():
           
           # quit
           if command == 'quit':
-            print('disconnect....')
+            print('End Program')
             break
 
           # correct command format
@@ -50,6 +50,10 @@ def main():
 
               # send command to broker
               cli_sock.send(command.encode('utf-8'))
+
+              # receive command 
+              confirmMsg = cli_sock.recv(2048)
+              print(confirmMsg.decode('utf-8'))
 
             # if can't connect to broker in 2 second  
             except: 

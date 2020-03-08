@@ -32,7 +32,9 @@ def handle_client(s,addr):
            if topic == command[2]:
              # send message to all who subscribed the topic
              for subscriber in topicDict[command[2]]:
-              subscriber.send(command[3].encode('utf-8'))     
+              subscriber.send(command[3].encode('utf-8'))  
+        # broker -> publisher (receive data already) 
+        s.send(("Send to Broker Already").encode('utf-8'))  
         s.close()
         break
       
