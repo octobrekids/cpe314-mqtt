@@ -11,7 +11,7 @@ topicDict = {}
 # get hostname
 hostname = gethostname()
 # get IPAddr from hostname
-IPAddr = gethostbyname(hostname) 
+IPAddr = gethostbyname(hostname)
 
 def handle_client(s,addr):
   # store ip and port
@@ -49,6 +49,7 @@ def handle_client(s,addr):
         else:
           topicDict[command[2]].append(s)
           #print(topicDict[command[2]])
+        s.send(("Subscribe Already").encode('utf-8'))
 
   # if error occur from ctrl-c (subscriber) then removed the socket from subscribed topic
   except: 
