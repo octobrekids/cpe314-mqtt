@@ -48,6 +48,9 @@ def main():
 
                 # send command to broker
                 cli_sock.send(command.encode('utf-8'))
+                
+                confirmMsg = cli_sock.recv(2048)
+                print(confirmMsg.decode('utf-8'))
 
                 # try to receive msg from broker (subscribed topic)
                 try:
